@@ -1,120 +1,165 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Voice of Customer Dashboard</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
-<div class="flex h-screen overflow-hidden">
 
-  <!-- FILTER PANEL -->
-  <aside id="filterPanel" class="w-72 bg-white border-r p-4 overflow-y-auto">
-    <h2 class="text-lg font-bold mb-4">Filters</h2>
+<div class="dashboard">
 
-    <div class="mb-4">
-      <label class="font-semibold text-sm">Business Name</label>
-      <select id="businessFilter">
-        <option selected>Metro</option>
-      </select>
+  <!-- FILTER PANEL (UI ONLY FOR NOW) -->
+  <aside class="filters">
+    <h2>Filters</h2>
+
+    <label>Business Name</label>
+    <select>
+      <option>Metro</option>
+    </select>
+
+    <label>Zone</label>
+    <input placeholder="Search zone" />
+
+    <label>State</label>
+    <input placeholder="Search state" />
+
+    <label>City</label>
+    <input placeholder="Search city" />
+
+    <label>Store</label>
+    <input placeholder="Search store" />
+
+    <label>Financial Year</label>
+    <div>
+      <input type="checkbox" checked /> FY2022â€“2023
     </div>
 
-    <div class="mb-4">
-      <label class="font-semibold text-sm">Zone</label>
-      <div id="zoneFilter"></div>
-    </div>
-
-    <div class="mb-4">
-      <label class="font-semibold text-sm">State</label>
-      <input placeholder="Search state">
-      <div id="stateFilter"></div>
-    </div>
-
-    <div class="mb-4">
-      <label class="font-semibold text-sm">City</label>
-      <input placeholder="Search city">
-      <div id="cityFilter"></div>
-    </div>
-
-    <div class="mb-4">
-      <label class="font-semibold text-sm">Store</label>
-      <input placeholder="Search store">
-      <div id="storeFilter"></div>
-    </div>
-
-    <div class="mb-4">
-      <label class="font-semibold text-sm">Financial Year</label>
-      <label class="text-sm">
-        <input type="checkbox" checked> FY2025–2026
-      </label>
-    </div>
-
-    <button id="resetFilters" class="bg-gray-800 text-white p-2 rounded">
-      Reset Filters
-    </button>
+    <button class="reset">Reset Filters</button>
   </aside>
 
-  <!-- MAIN -->
-  <main class="flex-1 p-6 overflow-y-auto">
+  <!-- MAIN CONTENT -->
+  <main class="content">
 
-    <div class="flex mb-6">
-      <button id="toggleFilters" class="bg-gray-900 text-white p-2 rounded text-sm">
-        Hide Filters
-      </button>
-      <h1 class="text-2xl font-bold" style="margin-left:1rem">
-        Voice of Customer Dashboard
-      </h1>
-    </div>
+    <header class="topbar">
+      <button class="toggle">Hide Filters</button>
+      <h1>Voice of Customer Dashboard</h1>
+    </header>
 
-    <!-- KPIs -->
-    <section class="grid grid-cols-1 md-grid-cols-3 gap-4 mb-8">
-      <div class="bg-white p-4 rounded shadow">
-        <p class="text-sm text-gray-500">Total Reviews</p>
-        <p id="kpiTotalReviews" class="text-2xl font-bold">—</p>
+    <!-- KPI CARDS -->
+    <section class="kpis">
+      <div class="card">
+        <p>Total Reviews</p>
+        <h2 id="kpiTotalReviews">?</h2>
       </div>
-      <div class="bg-white p-4 rounded shadow">
-        <p class="text-sm text-gray-500">% Negative Reviews</p>
-        <p id="kpiNegativePct" class="text-2xl font-bold">—</p>
+
+      <div class="card">
+        <p>% Negative Reviews</p>
+        <h2 id="kpiNegativePct">?</h2>
       </div>
-      <div class="bg-white p-4 rounded shadow">
-        <p class="text-sm text-gray-500">Best / Worst Store</p>
-        <p id="kpiBestWorst" class="font-semibold">—</p>
+
+      <div class="card">
+        <p>Best / Worst Store</p>
+        <h2 id="kpiBestWorst">?</h2>
       </div>
     </section>
 
-    <!-- STRATEGIC INSIGHTS -->
-    <section class="mb-10">
-      <h2 class="text-xl font-bold mb-4">Strategic Insights</h2>
+    <!-- STRATEGIC INSIGHTS (STATIC FOR NOW) -->
+    <section class="insights">
+      <h2>Strategic Insights</h2>
 
-      <div class="grid grid-cols-1 md-grid-cols-3 gap-4">
-        <div class="bg-gray-100 p-4 rounded shadow">
-          <h3 class="font-bold">Store Experience Dominates</h3>
-          <p class="text-sm">Primary driver of praise and criticism.</p>
+      <div class="insight-cards">
+        <div class="insight gray">
+          <h3>Store Experience Dominates</h3>
+          <p>Primary driver of praise and criticism.</p>
         </div>
-        <div class="bg-blue-50 p-4 rounded shadow">
-          <h3 class="font-bold">Regional Sentiment Dip</h3>
-          <p class="text-sm">Zone-level decline detected.</p>
+
+        <div class="insight blue">
+          <h3>Regional Sentiment Dip</h3>
+          <p>Zone-level decline detected.</p>
         </div>
-        <div class="bg-yellow-50 p-4 rounded shadow">
-          <h3 class="font-bold">Stores Needing Attention</h3>
-          <p class="text-sm">Lowest rated locations identified.</p>
+
+        <div class="insight yellow">
+          <h3>Stores Needing Attention</h3>
+          <p>Lowest rated locations identified.</p>
         </div>
       </div>
     </section>
 
-    <p class="text-sm text-gray-500">Charts and comments will render below.</p>
+    <p class="placeholder">Charts and comments will render below.</p>
 
   </main>
 </div>
 
-<script src="js/data.js"></script>
-<script src="js/filters.js"></script>
-<script src="js/nlp.js"></script>
-<script src="js/charts.js"></script>
-<script src="js/comments.js"></script>
-<script src="js/main.js"></script>
+<!-- =========================
+     STEP 1: LOAD JSON DATA
+========================= -->
+<script>
+let reviewsData = [];
+
+fetch("reviewsData.json")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error("Failed to load reviewsData.json");
+    }
+    return response.json();
+  })
+  .then(data => {
+    reviewsData = data;
+    initializeDashboard();
+  })
+  .catch(error => {
+    console.error("Error loading data:", error);
+  });
+</script>
+
+<!-- =========================
+     STEP 2: DASHBOARD LOGIC
+========================= -->
+<script>
+function initializeDashboard() {
+  updateKPIs(reviewsData);
+}
+
+function updateKPIs(data) {
+
+  // Total Reviews
+  document.getElementById("kpiTotalReviews").innerText = data.length;
+
+  // % Negative Reviews
+  const negativeCount = data.filter(d => d.sentiment === "Negative").length;
+  const negativePct = data.length
+    ? ((negativeCount / data.length) * 100).toFixed(1)
+    : 0;
+
+  document.getElementById("kpiNegativePct").innerText = negativePct + "%";
+
+  // Best / Worst Store
+  const storeRatings = {};
+
+  data.forEach(d => {
+    if (!storeRatings[d.store_name]) {
+      storeRatings[d.store_name] = [];
+    }
+    storeRatings[d.store_name].push(d.google_rating);
+  });
+
+  const averages = Object.entries(storeRatings).map(([store, ratings]) => ({
+    store,
+    avg: ratings.reduce((a, b) => a + b, 0) / ratings.length
+  }));
+
+  averages.sort((a, b) => b.avg - a.avg);
+
+  const best = averages[0]?.store || "-";
+  const worst = averages[averages.length - 1]?.store || "-";
+
+  document.getElementById("kpiBestWorst").innerText =
+    best + " / " + worst;
+}
+</script>
+
 </body>
 </html>
