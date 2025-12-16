@@ -1,0 +1,120 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Voice of Customer Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+<div class="flex h-screen overflow-hidden">
+
+  <!-- FILTER PANEL -->
+  <aside id="filterPanel" class="w-72 bg-white border-r p-4 overflow-y-auto">
+    <h2 class="text-lg font-bold mb-4">Filters</h2>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">Business Name</label>
+      <select id="businessFilter">
+        <option selected>Metro</option>
+      </select>
+    </div>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">Zone</label>
+      <div id="zoneFilter"></div>
+    </div>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">State</label>
+      <input placeholder="Search state">
+      <div id="stateFilter"></div>
+    </div>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">City</label>
+      <input placeholder="Search city">
+      <div id="cityFilter"></div>
+    </div>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">Store</label>
+      <input placeholder="Search store">
+      <div id="storeFilter"></div>
+    </div>
+
+    <div class="mb-4">
+      <label class="font-semibold text-sm">Financial Year</label>
+      <label class="text-sm">
+        <input type="checkbox" checked> FY2025–2026
+      </label>
+    </div>
+
+    <button id="resetFilters" class="bg-gray-800 text-white p-2 rounded">
+      Reset Filters
+    </button>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="flex-1 p-6 overflow-y-auto">
+
+    <div class="flex mb-6">
+      <button id="toggleFilters" class="bg-gray-900 text-white p-2 rounded text-sm">
+        Hide Filters
+      </button>
+      <h1 class="text-2xl font-bold" style="margin-left:1rem">
+        Voice of Customer Dashboard
+      </h1>
+    </div>
+
+    <!-- KPIs -->
+    <section class="grid grid-cols-1 md-grid-cols-3 gap-4 mb-8">
+      <div class="bg-white p-4 rounded shadow">
+        <p class="text-sm text-gray-500">Total Reviews</p>
+        <p id="kpiTotalReviews" class="text-2xl font-bold">—</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <p class="text-sm text-gray-500">% Negative Reviews</p>
+        <p id="kpiNegativePct" class="text-2xl font-bold">—</p>
+      </div>
+      <div class="bg-white p-4 rounded shadow">
+        <p class="text-sm text-gray-500">Best / Worst Store</p>
+        <p id="kpiBestWorst" class="font-semibold">—</p>
+      </div>
+    </section>
+
+    <!-- STRATEGIC INSIGHTS -->
+    <section class="mb-10">
+      <h2 class="text-xl font-bold mb-4">Strategic Insights</h2>
+
+      <div class="grid grid-cols-1 md-grid-cols-3 gap-4">
+        <div class="bg-gray-100 p-4 rounded shadow">
+          <h3 class="font-bold">Store Experience Dominates</h3>
+          <p class="text-sm">Primary driver of praise and criticism.</p>
+        </div>
+        <div class="bg-blue-50 p-4 rounded shadow">
+          <h3 class="font-bold">Regional Sentiment Dip</h3>
+          <p class="text-sm">Zone-level decline detected.</p>
+        </div>
+        <div class="bg-yellow-50 p-4 rounded shadow">
+          <h3 class="font-bold">Stores Needing Attention</h3>
+          <p class="text-sm">Lowest rated locations identified.</p>
+        </div>
+      </div>
+    </section>
+
+    <p class="text-sm text-gray-500">Charts and comments will render below.</p>
+
+  </main>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/filters.js"></script>
+<script src="js/nlp.js"></script>
+<script src="js/charts.js"></script>
+<script src="js/comments.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
