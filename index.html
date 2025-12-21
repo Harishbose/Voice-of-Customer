@@ -538,7 +538,7 @@ function normalizeInsightText(text) {
 
 		data.forEach(row => {
         if (row['City']) {
-            set.add(normalizeCanonicalCity(row['City'].trim()));
+            set.add(row['City'].trim());
         }
     });
 
@@ -561,7 +561,6 @@ function normalizeInsightText(text) {
                 complete: results => {
                     data = results.data.filter(row => row['Store Name'] && row['Google Rating']);
                     filteredData = [...data];
-					buildCanonicalCities(filteredData);
                     initializeFilters();
                     updateDashboard();
                 },
@@ -573,6 +572,24 @@ function normalizeInsightText(text) {
         function classifyImprovementCategory(comment) {
             if (!comment || typeof comment !== 'string') return 'Store Experience';
             comment = comment.toLowerCase();
+			// ✅ MERGED CATEGORY: Store Experience
+			if (
+				comment.includes('staff') ||
+				comment.includes('service') ||
+				comment.includes('behavior') ||
+				comment.includes('behaviour') ||
+				comment.includes('queue') ||
+				comment.includes('wait') ||
+				comment.includes('delay') ||
+				comment.includes('line') ||
+				comment.includes('store') ||
+				comment.includes('experience')
+			) {
+				return 'Store Experience';
+			}
+			
+
+
             const categories = [
                 { name: 'Store Experience', keywords: ['staff', 'service', 'salesman', 'experience', 'assistance', 'interaction'], priority: 1 },
                 { name: 'Product Quality', keywords: ['quality', 'material', 'product', 'durability', 'defect', 'faulty'], priority: 2 },
@@ -1075,7 +1092,7 @@ function normalizeInsightText(text) {
 
         function updateStrategicInsights() {
             const totalReviews = filteredData.length;
-            const storeExperienceCount = filteredData.filter(row => classifyImprovementCategory(row['Customer Response']) === 'Store Experience').length;
+            const storeExperienceCount = filteredData.filter(row => 	(row['Customer Response']) === 'Store Experience').length;
             const storeExperiencePercentage = totalReviews ? ((storeExperienceCount / totalReviews) * 100).toFixed(1) : 0;
 
             const zones = [...new Set(filteredData.map(row => row['Zone']))];
@@ -1137,7 +1154,7 @@ function normalizeInsightText(text) {
             document.getElementById('underperformingStores').textContent =normalizeInsightText(underperformingStores? `Stores ${underperformingStores} recorded the lowest ratings (≤4) and consistently receive negative sentiment.`
             : 'No stores with consistently low ratings (≤4) detected.');
             document.getElementById('positiveMomentum').textContent =normalizeInsightText(`Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the West Zone.`);
-            document.getElementById('cityInsight').textContent =normalizeInsightText(`${topCities || 'Selected'} Cities in Spotlight`);
+            document.getElementById('cityInsight').textContent =normalizeInsightText(`${topCities || 'Selected'} Cities in Spotlight`);;
             document.getElementById('bestStoreInsight').textContent =normalizeInsightText(`Leading Store: ${bestStore || 'None'}`); 
             document.getElementById('themeInsight').textContent =normalizeInsightText(`This was the most mentioned theme, appearing in ${storeExperiencePercentage}% of all customer feedback. It is the key driver of both praise and criticism.`);
             document.querySelector('.card-best p').textContent = normalizeInsightText(`Store ${bestStore || 'None'} (${bestRating.toFixed(1)}) and its regional cluster lead on service – potential model for scaling excellence.`);
