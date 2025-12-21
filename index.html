@@ -11,16 +11,46 @@ Promise.all([
     insightDictionary = new Typo("en_US", files[0], files[1]);
 });
 
-function normalizeInsightText(text) {
-    if (!text || !insightDictionary) return text;
+// Levenshtein distance for fuzzy matching (city normalization)
+function levenshtein(a, b) {
+    const matrix = Array.from({ length: a.length + 1 }, (_, i) => [i]);
 
-    return text.split(/\b/).map(function(word){
-        if (/^[a-zA-Z]{3,}$/.test(word) && !insightDictionary.check(word)) {
-            var suggestions = insightDictionary.suggest(word);
-            return suggestions.length ? suggestions[0] : word;
+    for (let j = 1; j <= b.length; j++) matrix[0][j] = j;
+
+    for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+            matrix[i][j] = Math.min(
+                matrix[i - 1][j] + 1,
+                matrix[i][j - 1] + 1,
+                matrix[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1)
+            );
         }
-        return word;
-    }).join("");
+    }
+
+    return matrix[a.length][b.length];
+}
+
+
+function normalizeInsightText(text) {
+    if (!text || !canonicalCities.length) return text;
+
+    return text.split(/\b/).map(token => {
+        if (!/^[a-zA-Z]{3,}$/.test(token)) return token;
+
+        let bestMatch = token;
+        let bestScore = Infinity;
+
+        canonicalCities.forEach(city => {
+            const score = levenshtein(token.toLowerCase(), city.toLowerCase());
+            if (score < bestScore) {
+                bestScore = score;
+                bestMatch = city;
+            }
+        });
+
+        // Only correct if reasonably close
+        return bestScore <= 2 ? bestMatch : token;
+    }).join('');
 }
 
         var gk_xlsxFileLookup = {"Fresh data.xlsx":true};
