@@ -537,6 +537,7 @@ function normalizeInsightText(text) {
                 complete: results => {
                     data = results.data.filter(row => row['Store Name'] && row['Google Rating']);
                     filteredData = [...data];
+					buildCanonicalCities(filteredData);
                     initializeFilters();
                     updateDashboard();
                 },
