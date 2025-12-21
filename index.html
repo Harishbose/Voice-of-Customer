@@ -521,6 +521,30 @@ function normalizeInsightText(text) {
         let data = [];
         let filteredData = [];
         let charts = {};
+		function normalizeCanonicalCity(city) {
+			if (!city || !insightDictionary) return city;
+		
+		// Correct obvious spelling issues in master data using dictionary
+			if (!insightDictionary.check(city)) {
+				const suggestions = insightDictionary.suggest(city);
+				if (suggestions.length) {
+					return suggestions[0];
+				}
+			}
+		return city;
+		}
+		function buildCanonicalCities(data) {
+			const set = new Set();
+
+		data.forEach(row => {
+        if (row['City']) {
+            set.add(normalizeCanonicalCity(row['City'].trim()));
+        }
+    });
+
+    canonicalCities = Array.from(set);
+}
+
 
         function loadData() {
             const csv = loadFileData('Fresh data.xlsx');
