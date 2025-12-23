@@ -557,54 +557,109 @@ function normalizeInsightText(text) {
         }
 
         // NLP-based classification
-        function classifyImprovementCategory(comment) {
-            if (!comment || typeof comment !== 'string') return 'Store Experience';
-            comment = comment.toLowerCase();
-			// ✅ MERGED CATEGORY: Store Experience
-			if (
-				comment.includes('staff') ||
-				comment.includes('service') ||
-				comment.includes('behavior') ||
-				comment.includes('behaviour') ||
-				comment.includes('queue') ||
-				comment.includes('wait') ||
-				comment.includes('delay') ||
-				comment.includes('line') ||
-				comment.includes('store') ||
-				comment.includes('experience')
-			) {
-				return 'Store Experience';
-			}
-			
+       function classifyImprovementCategory(comment) {
+    if (!comment || typeof comment !== 'string') {
+        return 'Store Experience';
+    }
 
+    const text = comment.toLowerCase();
 
-            const categories = [
-                { name: 'Store Experience', keywords: ['staff', 'service', 'salesman', 'experience', 'assistance', 'interaction'], priority: 1 },
-                { name: 'Product Quality', keywords: ['quality', 'material', 'product', 'durability', 'defect', 'faulty'], priority: 2 },
-                { name: 'Inventory Management', keywords: ['collection', 'variety', 'size', 'available', 'stock', 'availability'], priority: 3 },
-                { name: 'Pricing & Discounts', keywords: ['price', 'cost', 'expensive', 'discount', 'deal', 'value'], priority: 4 },
-                { name: 'Return & Refund Policies', keywords: ['return', 'exchange', 'refund', 'policy', 'returnable'], priority: 5 },
-                { name: 'Customer Support', keywords: ['support', 'help', 'assistance', 'responsive', 'query', 'resolution'], priority: 6 },
-                { name: 'Promotions & Offers', keywords: ['promotion', 'offer', 'loyalty', 'deal', 'coupon', 'reward'], priority: 7 },
-                { name: 'Billing & Payment Issues', keywords: ['billing', 'payment', 'charge', 'overcharge', 'invoice', 'transaction'], priority: 8 },
-                { name: 'Staff Behaviour', keywords: ['behaviour', 'rude', 'polite', 'attitude', 'courtesy', 'professionalism'], priority: 9 },
-                { name: 'Wait Time / Queue Management', keywords: ['wait', 'queue', 'delay', 'slow', 'line', 'turnaround'], priority: 10 }
-            ];
-            let matches = categories
-                .map(category => ({
-                    name: category.name,
-                    priority: category.priority,
-                    matches: category.keywords.filter(keyword => comment.includes(keyword)).length
-                }))
-                .filter(category => category.matches > 0);
-            if (matches.length > 1) {
-                matches.sort((a, b) => a.priority - b.priority);
-                return matches[0].name;
-            } else if (matches.length === 1) {
-                return matches[0].name;
-            }
-            return 'Store Experience';
-        }
+    // ✅ MERGED CATEGORY: Store Experience
+    if (
+        text.includes('staff') ||
+        text.includes('service') ||
+        text.includes('behavior') ||
+        text.includes('behaviour') ||
+        text.includes('queue') ||
+        text.includes('wait') ||
+        text.includes('delay') ||
+        text.includes('line') ||
+        text.includes('store') ||
+        text.includes('experience') ||
+        text.includes('salesman') ||
+        text.includes('assistance') ||
+        text.includes('interaction')
+    ) {
+        return 'Store Experience';
+    }
+
+    if (
+        text.includes('quality') ||
+        text.includes('material') ||
+        text.includes('product') ||
+        text.includes('durability') ||
+        text.includes('defect') ||
+        text.includes('faulty')
+    ) {
+        return 'Product Quality';
+    }
+
+    if (
+        text.includes('collection') ||
+        text.includes('variety') ||
+        text.includes('size') ||
+        text.includes('available') ||
+        text.includes('stock') ||
+        text.includes('availability')
+    ) {
+        return 'Inventory Management';
+    }
+
+    if (
+        text.includes('price') ||
+        text.includes('cost') ||
+        text.includes('expensive') ||
+        text.includes('discount') ||
+        text.includes('deal') ||
+        text.includes('value')
+    ) {
+        return 'Pricing & Discounts';
+    }
+
+    if (
+        text.includes('return') ||
+        text.includes('exchange') ||
+        text.includes('refund') ||
+        text.includes('policy') ||
+        text.includes('returnable')
+    ) {
+        return 'Return & Refund Policies';
+    }
+
+    if (
+        text.includes('support') ||
+        text.includes('help') ||
+        text.includes('responsive') ||
+        text.includes('query') ||
+        text.includes('resolution')
+    ) {
+        return 'Customer Support';
+    }
+
+    if (
+        text.includes('promotion') ||
+        text.includes('offer') ||
+        text.includes('loyalty') ||
+        text.includes('coupon') ||
+        text.includes('reward')
+    ) {
+        return 'Promotions & Offers';
+    }
+
+    if (
+        text.includes('billing') ||
+        text.includes('payment') ||
+        text.includes('charge') ||
+        text.includes('overcharge') ||
+        text.includes('invoice') ||
+        text.includes('transaction')
+    ) {
+        return 'Billing & Payment Issues';
+    }
+
+    return 'Store Experience';
+}
+
 
         // Initialize filters
         function initializeFilters() {
@@ -1142,7 +1197,7 @@ function normalizeInsightText(text) {
             document.getElementById('underperformingStores').textContent =normalizeInsightText(underperformingStores? `Stores ${underperformingStores} recorded the lowest ratings (≤4) and consistently receive negative sentiment.`
             : 'No stores with consistently low ratings (≤4) detected.');
             document.getElementById('positiveMomentum').textContent =normalizeInsightText(`Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the West Zone.`);
-            document.getElementById('cityInsight').textContent =normalizeInsightText(`${topCities || 'Selected'} Cities in Spotlight`);;
+            document.getElementById('cityInsight').textContent =`${topCities || 'Selected'} Cities in Spotlight`;
             document.getElementById('bestStoreInsight').textContent =normalizeInsightText(`Leading Store: ${bestStore || 'None'}`); 
             document.getElementById('themeInsight').textContent =normalizeInsightText(`This was the most mentioned theme, appearing in ${storeExperiencePercentage}% of all customer feedback. It is the key driver of both praise and criticism.`);
             document.querySelector('.card-best p').textContent = normalizeInsightText(`Store ${bestStore || 'None'} (${bestRating.toFixed(1)}) and its regional cluster lead on service – potential model for scaling excellence.`);
