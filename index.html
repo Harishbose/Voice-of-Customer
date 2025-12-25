@@ -532,6 +532,37 @@ function normalizeInsightText(text) {
         let filteredData = [];
         let charts = {};
 		
+		// PUT EMOTION WORD CLOUD FUNCTIONS HERE  👇
+		function standardizeEmotionText(text) {
+			if (!text) return "";
+			const lower = text.toLowerCase();
+			if (/amazing|excellent|loved|good|great|nice|perfect|awesome/.test(lower)) return "Positive";
+			if (/bad|poor|terrible|worst|horrible|awful|rude/.test(lower)) return "Negative";
+			if (/okay|average|fine|neutral|normal/.test(lower)) return "Neutral";
+			return "Mixed";
+		}
+
+		function buildEmotionWordCloud(data) {
+			const emotionCounts = {};
+			data.forEach(row => {
+				const emotion = standardizeEmotionText(row["Customer Response"] || "");
+				emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+			});
+
+		const container = document.getElementById("wordCloud");
+		container.innerHTML = ""; 
+
+		Object.entries(emotionCounts).forEach(([emotion, count]) => {
+			const span = document.createElement("span");
+			span.textContent = emotion;
+			span.style.fontSize = `${10 + count * 2}px`;
+			span.style.margin = "8px";
+			span.style.fontWeight = "600";
+			container.appendChild(span);
+		});
+	}
+
+
 
 
         function loadData() {
@@ -550,6 +581,7 @@ function normalizeInsightText(text) {
                     data = results.data.filter(row => row['Store Name'] && row['Google Rating']);
                     filteredData = [...data];
                     initializeFilters();
+					buildEmotionWordCloud(filteredData);
                     updateDashboard();
                 },
                 error: err => console.error('Error parsing CSV:', err)
