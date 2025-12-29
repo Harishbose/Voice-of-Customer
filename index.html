@@ -1178,7 +1178,7 @@ function normalizeInsightText(text) {
                 }
             });
 
-            document.getElementById('zoneInsightText').textContent = normalizeInsightText(`Average rating dropped to ${lowestZoneRating.toFixed(1)}, driven largely by negative reviews on in-store experience.`);
+            document.getElementById('zoneInsightText').textContent = `Average rating dropped to ${lowestZoneRating.toFixed(1)}, driven largely by negative reviews on in-store experience.`;
 
             const storeRatings = {};
             filteredData.forEach(row => {
@@ -1226,7 +1226,7 @@ function normalizeInsightText(text) {
             const topCities = Object.entries(cityReviewCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 3)
-                .map(([city]) => normalizeInsightText(city))
+                .map(([city]) => city)
                 .join(', ') || 'None';
 
             let bestStore = '', bestRating = -Infinity;
@@ -1238,14 +1238,14 @@ function normalizeInsightText(text) {
                 }
             }
 
-            document.getElementById('zoneInsight').textContent =normalizeInsightText(`${lowestZone || 'Selected'} Zone Sentiment Dip`);
-            document.getElementById('underperformingStores').textContent =normalizeInsightText(underperformingStores? `Stores ${underperformingStores} recorded the lowest ratings (≤4) and consistently receive negative sentiment.`
-            : 'No stores with consistently low ratings (≤4) detected.');
-            document.getElementById('positiveMomentum').textContent =normalizeInsightText(`Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the ${bestZone || 'zones'}.`);
+            document.getElementById('zoneInsight').textContent = `${lowestZone || 'Selected'} Zone Sentiment Dip`;
+            document.getElementById('underperformingStores').textContent = underperformingStores ? `Stores ${underperformingStores} recorded the lowest ratings (≤4) and consistently receive negative sentiment.`
+            : 'No stores with consistently low ratings (≤4) detected.';
+            document.getElementById('positiveMomentum').textContent = `Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the ${bestZone || 'zones'}.`;
             document.getElementById('cityInsight').textContent =`${topCities || 'Selected'} Cities in Spotlight`;
-            document.getElementById('bestStoreInsight').textContent =normalizeInsightText(`Leading Store: ${bestStore || 'None'}`); 
-            document.getElementById('themeInsight').textContent =normalizeInsightText(`This was the most mentioned theme, appearing in ${storeExperiencePercentage}% of all customer feedback. It is the key driver of both praise and criticism.`);
-            document.querySelector('.card-best p').textContent = normalizeInsightText(`Store ${bestStore || 'None'} (${bestRating.toFixed(1)}) and its regional cluster lead on service – potential model for scaling excellence.`);
+            document.getElementById('bestStoreInsight').textContent = `Leading Store: ${bestStore || 'None'}`; 
+            document.getElementById('themeInsight').textContent = `This was the most mentioned theme, appearing in ${storeExperiencePercentage}% of all customer feedback. It is the key driver of both praise and criticism.`;
+            document.querySelector('.card-best p').textContent = `Store ${bestStore || 'None'} (${bestRating.toFixed(1)}) and its regional cluster lead on service – potential model for scaling excellence.`;
         }
 
         // Initial load
