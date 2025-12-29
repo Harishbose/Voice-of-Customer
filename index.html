@@ -566,13 +566,12 @@ function buildEmotionWordCloud(data) {
 
     WordCloud(document.getElementById('wordCloud'), {
         list: list.map(item => [item.text, item.weight]),
-        gridSize: 12,
-        weightFactor: size => size * 0.6,
+        gridSize: 16,
+        weightFactor: size => size * 0.8,
         fontFamily: 'Roboto, sans-serif',
         rotateRatio: 0.4,
         rotationSteps: 2,
         backgroundColor: 'white',
-        shape: "circle",
         color: function(word) {
             if (word === "Positive") return "#4CAF50";
             if (word === "Negative") return "#E53935";
