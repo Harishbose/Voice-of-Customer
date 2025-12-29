@@ -480,7 +480,7 @@ function normalizeInsightText(text) {
         <div class="chart-row">
             <div class="chart-container">
                 <h3>Emotion Word Cloud</h3>
-                <div id="wordCloud" class="word-cloud"></div>
+                <div id="wordCloud" style="width:100%; height:350px; background:#fff; margin-top:10px;"></div>
             </div>
             <div class="chart-container">
                 <h3>Sentiment Distribution</h3>
@@ -534,6 +534,7 @@ function normalizeInsightText(text) {
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wordcloud2.js/1.1.2/wordcloud2.min.js"></script>
     <script>
         // Loading and parsing data
         let data = [];
@@ -544,62 +545,43 @@ function normalizeInsightText(text) {
 		function standardizeEmotionText(text) {
 			if (!text) return "";
 			const lower = text.toLowerCase();
-			if (/amazing|excellent|awesome|perfect|loved|great|fantastic|wonderful/.test(lower)) return "Delighted";
-			if (/good|nice|happy|joy|pleased|satisfied|enjoyed/.test(lower)) return "Happy";
-			if (/bad|poor|terrible|worst|horrible|awful|disgusting/.test(lower)) return "Angry";
-			if (/rude|unfriendly|disrespectful|arrogant|unhelpful/.test(lower)) return "Frustrated";
-			if (/slow|wait|delay|queue|long|tedious/.test(lower)) return "Impatient";
-			if (/expensive|costly|overpriced|cheap|value/.test(lower)) return "Price Concerned";
-			if (/dirty|clean|hygiene|messy|neat/.test(lower)) return "Hygiene Focused";
-			if (/okay|average|fine|neutral|normal|alright/.test(lower)) return "Neutral";
+			if (/amazing|excellent|loved|good|great|nice|perfect|awesome/.test(lower)) return "Positive";
+			if (/bad|poor|terrible|worst|horrible|awful|rude/.test(lower)) return "Negative";
+			if (/okay|average|fine|neutral|normal/.test(lower)) return "Neutral";
 			return "Mixed";
 		}
 
-		function buildEmotionWordCloud(data) {
-			const emotionCounts = {};
-			data.forEach(row => {
-				const emotion = standardizeEmotionText(row["Customer Response"] || "");
-				emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
-			});
+function buildEmotionWordCloud(data) {
+    const emotionCounts = { Positive:0, Negative:0, Neutral:0, Mixed:0 };
 
-		const container = document.getElementById("wordCloud");
-		container.innerHTML = "";
-		container.style.position = "relative";
-		container.style.height = "300px";
-		container.style.overflow = "hidden";
+    data.forEach(row => {
+        const emotion = standardizeEmotionText(row["Customer Response"] || "");
+        emotionCounts[emotion] = (emotionCounts[emotion] || 0) + 1;
+    });
 
-		const emotionColors = {
-			"Delighted": "#10b981",
-			"Happy": "#34d399",
-			"Angry": "#ef4444",
-			"Frustrated": "#f87171",
-			"Impatient": "#fb923c",
-			"Price Concerned": "#f59e0b",
-			"Hygiene Focused": "#8b5cf6",
-			"Neutral": "#6b7280",
-			"Mixed": "#9ca3af"
-		};
+    const list = Object.entries(emotionCounts).map(([emotion, count]) => ({
+        text: emotion,
+        weight: count
+    }));
 
-		const sortedEmotions = Object.entries(emotionCounts)
-			.sort((a, b) => b[1] - a[1])
-			.slice(0, 15);
-
-		sortedEmotions.forEach(([emotion, count], index) => {
-			const span = document.createElement("span");
-			span.textContent = emotion;
-			span.style.position = "absolute";
-			span.style.fontSize = `${14 + count * 2}px`;
-			span.style.fontWeight = "bold";
-			span.style.color = emotionColors[emotion] || "#374151";
-			span.style.cursor = "pointer";
-			span.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
-			span.title = `Count: ${count}`;
-			span.style.left = `${Math.random() * 80 + 10}%`;
-			span.style.top = `${Math.random() * 80 + 10}%`;
-			container.appendChild(span);
-		});
-	}
-
+    WordCloud(document.getElementById('wordCloud'), {
+        list: list.map(item => [item.text, item.weight]),
+        gridSize: 12,
+        weightFactor: size => size * 0.6,
+        fontFamily: 'Roboto, sans-serif',
+        rotateRatio: 0.4,
+        rotationSteps: 2,
+        backgroundColor: 'white',
+        shape: "circle",
+        color: function(word) {
+            if (word === "Positive") return "#4CAF50";
+            if (word === "Negative") return "#E53935";
+            if (word === "Neutral")  return "#1E88E5";
+            if (word === "Mixed")    return "#8E24AA";
+            return "#333";
+        }
+    });
+}
 
 
 
@@ -935,7 +917,7 @@ function normalizeInsightText(text) {
         function updateDashboard() {
             updateKPIs();
             updateFeedbackBarChart();
-            updateWordCloud();
+            buildEmotionWordCloud(filteredData);
             updateSentimentPieChart();
             updateSentimentLineChart();
             updateHeatmap();
