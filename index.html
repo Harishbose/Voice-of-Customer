@@ -610,7 +610,13 @@ function normalizeInsightText(text) {
         text.includes('experience') ||
         text.includes('salesman') ||
         text.includes('assistance') ||
-        text.includes('interaction')
+        text.includes('interaction') ||
+        text.includes('billing') ||
+        text.includes('payment') ||
+        text.includes('charge') ||
+        text.includes('overcharge') ||
+        text.includes('invoice') ||
+        text.includes('transaction')
     ) {
         return 'Store Experience';
     }
@@ -678,16 +684,7 @@ function normalizeInsightText(text) {
         return 'Promotions & Offers';
     }
 
-    if (
-        text.includes('billing') ||
-        text.includes('payment') ||
-        text.includes('charge') ||
-        text.includes('overcharge') ||
-        text.includes('invoice') ||
-        text.includes('transaction')
-    ) {
-        return 'Billing & Payment Issues';
-    }
+
 
     return 'Store Experience';
 }
@@ -947,7 +944,7 @@ function normalizeInsightText(text) {
 
             const categories = [
                 'Store Experience','Inventory Management','Product Quality','Pricing & Discounts','Customer Support',
-                'Promotions & Offers','Return & Refund Policies','Billing & Payment Issues'
+                'Promotions & Offers','Return & Refund Policies'
             ];
 
             const counts = categories.map(category => filteredData.filter(row => classifyImprovementCategory(row['Customer Response']) === category).length);
@@ -1089,7 +1086,7 @@ function normalizeInsightText(text) {
             const categories = [
                 'Store Experience', 'Product Quality', 'Inventory Management', 'Pricing & Discounts',
                 'Return & Refund Policies', 'Customer Support', 'Promotions & Offers',
-                'Billing & Payment Issues', 'Staff Behaviour', 'Wait Time / Queue Management'
+                'Staff Behaviour', 'Wait Time / Queue Management'
             ];
             const stores = [...new Set(filteredData.map(row => row['Store Name']))].sort().slice(0, 10);
             const table = document.getElementById('heatmapTable');
