@@ -497,6 +497,12 @@ function normalizeInsightText(text) {
         <div class="chart-row">
             <div class="chart-container">
                 <h3>Sentiment Trend Over Time</h3>
+                <div style="margin-bottom: 10px;">
+                    <label for="trendZoneFilter">Filter by Zone: </label>
+                    <select id="trendZoneFilter" onchange="updateSentimentLineChart()">
+                        <option value="">All Zones</option>
+                    </select>
+                </div>
                 <canvas id="sentimentLineChart"></canvas>
             </div>
         </div>
@@ -505,6 +511,13 @@ function normalizeInsightText(text) {
                 <h3>Store Sentiment Heatmap</h3>
                 <div class="heatmap-container">
                     <table id="heatmapTable" class="heatmap-table"></table>
+                </div>
+                <div style="margin-top: 10px; font-size: 0.9rem;">
+                    <strong>Legend:</strong> 
+                    <span style="background-color: rgba(16, 185, 129, 0.2); padding: 2px 5px; margin-right: 5px;">Positive</span>
+                    <span style="background-color: rgba(245, 158, 11, 0.2); padding: 2px 5px; margin-right: 5px;">Neutral</span>
+                    <span style="background-color: rgba(239, 68, 68, 0.2); padding: 2px 5px;">Negative</span>
+                    (Score based on sentiment: +1 Positive, -1 Negative, 0 Neutral)
                 </div>
             </div>
             <div class="chart-container">
@@ -536,9 +549,14 @@ function normalizeInsightText(text) {
 		function standardizeEmotionText(text) {
 			if (!text) return "";
 			const lower = text.toLowerCase();
-			if (/amazing|excellent|loved|good|great|nice|perfect|awesome/.test(lower)) return "Positive";
-			if (/bad|poor|terrible|worst|horrible|awful|rude/.test(lower)) return "Negative";
-			if (/okay|average|fine|neutral|normal/.test(lower)) return "Neutral";
+			if (/amazing|excellent|awesome|perfect|loved|great|fantastic|wonderful/.test(lower)) return "Delighted";
+			if (/good|nice|happy|joy|pleased|satisfied|enjoyed/.test(lower)) return "Happy";
+			if (/bad|poor|terrible|worst|horrible|awful|disgusting/.test(lower)) return "Angry";
+			if (/rude|unfriendly|disrespectful|arrogant|unhelpful/.test(lower)) return "Frustrated";
+			if (/slow|wait|delay|queue|long|tedious/.test(lower)) return "Impatient";
+			if (/expensive|costly|overpriced|cheap|value/.test(lower)) return "Price Concerned";
+			if (/dirty|clean|hygiene|messy|neat/.test(lower)) return "Hygiene Focused";
+			if (/okay|average|fine|neutral|normal|alright/.test(lower)) return "Neutral";
 			return "Mixed";
 		}
 
@@ -552,12 +570,18 @@ function normalizeInsightText(text) {
 		const container = document.getElementById("wordCloud");
 		container.innerHTML = ""; 
 
-		Object.entries(emotionCounts).forEach(([emotion, count]) => {
+		const sortedEmotions = Object.entries(emotionCounts)
+			.sort((a, b) => b[1] - a[1])
+			.slice(0, 10);
+
+		sortedEmotions.forEach(([emotion, count]) => {
 			const span = document.createElement("span");
-			span.textContent = emotion;
-			span.style.fontSize = `${10 + count * 2}px`;
+			span.textContent = `${emotion} (${count})`;
+			span.style.fontSize = `${12 + count * 1.5}px`;
 			span.style.margin = "8px";
 			span.style.fontWeight = "600";
+			span.style.cursor = "pointer";
+			span.title = `Count: ${count}`;
 			container.appendChild(span);
 		});
 	}
@@ -743,6 +767,9 @@ function normalizeInsightText(text) {
                 </div>
             `).join('');
             zoneContainer.querySelectorAll('input').forEach(input => input.addEventListener('change', updateFilters));
+
+            const trendZoneSelect = document.getElementById('trendZoneFilter');
+            trendZoneSelect.innerHTML = '<option value="">All Zones</option>' + zones.map(zone => `<option value="${zone}">${zone}</option>`).join('');
 
             // State filter
             if (selectedZones.length) tempData = tempData.filter(row => selectedZones.includes(row['Zone']));
@@ -1056,12 +1083,14 @@ function normalizeInsightText(text) {
         }
 
         function updateSentimentLineChart() {
+            const selectedZone = document.getElementById('trendZoneFilter').value;
+            const chartData = selectedZone ? filteredData.filter(row => row['Zone'] === selectedZone) : filteredData;
             const monthOrder = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-            const months = [...new Set(filteredData.map(row => row['Month']))].sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
+            const months = [...new Set(chartData.map(row => row['Month']))].sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b));
             const sentiments = ['Positive', 'Neutral', 'Negative'];
             const datasets = sentiments.map(sentiment => ({
                 label: sentiment,
-                data: months.map(month => filteredData.filter(row => row['Month'] === month && row['Sentiment'] === sentiment).length),
+                data: months.map(month => chartData.filter(row => row['Month'] === month && row['Sentiment'] === sentiment).length),
                 borderColor: sentiment === 'Positive' ? '#10b981' : sentiment === 'Neutral' ? '#f59e0b' : '#ef4444',
                 fill: false
             }));
