@@ -444,7 +444,7 @@ function normalizeInsightText(text) {
                 <span class="icon">📍</span>
                 <div>
                     <h3 id="zoneInsight">Zone Sentiment Dip</h3>
-                    <p>Average rating dropped to 4.1, driven largely by negative reviews on in-store experience.</p>
+                    <p id="zoneInsightText">Average rating dropped to 4.1, driven largely by negative reviews on in-store experience.</p>
                 </div>
             </div>
             <div class="insight-card card-stores">
@@ -1164,7 +1164,7 @@ function normalizeInsightText(text) {
 
         function updateStrategicInsights() {
             const totalReviews = filteredData.length;
-            const storeExperienceCount = filteredData.filter(row => 	(row['Customer Response']) === 'Store Experience').length;
+            const storeExperienceCount = filteredData.filter(row => classifyImprovementCategory(row['Customer Response']) === 'Store Experience').length;
             const storeExperiencePercentage = totalReviews ? ((storeExperienceCount / totalReviews) * 100).toFixed(1) : 0;
 
             const zones = [...new Set(filteredData.map(row => row['Zone']))];
@@ -1177,6 +1177,8 @@ function normalizeInsightText(text) {
                     lowestZone = zone;
                 }
             });
+
+            document.getElementById('zoneInsightText').textContent = normalizeInsightText(`Average rating dropped to ${lowestZoneRating.toFixed(1)}, driven largely by negative reviews on in-store experience.`);
 
             const storeRatings = {};
             filteredData.forEach(row => {
@@ -1201,6 +1203,20 @@ function normalizeInsightText(text) {
             const positiveChange = recentData.length && oldData.length ? 
                 (((recentPositive / recentData.length) - (oldPositive / oldData.length)) * 100).toFixed(1) : 0;
 
+            let bestZone = '';
+            let bestIncrease = -Infinity;
+            zones.forEach(zone => {
+                const zoneRecent = recentData.filter(row => row['Zone'] === zone);
+                const zoneOld = oldData.filter(row => row['Zone'] === zone);
+                const zoneRecentPositive = zoneRecent.filter(row => row['Sentiment'] === 'Positive').length;
+                const zoneOldPositive = zoneOld.filter(row => row['Sentiment'] === 'Positive').length;
+                const zoneIncrease = zoneRecent.length && zoneOld.length ? (((zoneRecentPositive / zoneRecent.length) - (zoneOldPositive / zoneOld.length)) * 100) : 0;
+                if (zoneIncrease > bestIncrease) {
+                    bestIncrease = zoneIncrease;
+                    bestZone = zone;
+                }
+            });
+
             const cityReviewCounts = {};
             filteredData.forEach(row => {
                 const city = row['City'];
@@ -1210,7 +1226,7 @@ function normalizeInsightText(text) {
             const topCities = Object.entries(cityReviewCounts)
                 .sort((a, b) => b[1] - a[1])
                 .slice(0, 3)
-                .map(([city]) => city)
+                .map(([city]) => normalizeInsightText(city))
                 .join(', ') || 'None';
 
             let bestStore = '', bestRating = -Infinity;
@@ -1225,7 +1241,7 @@ function normalizeInsightText(text) {
             document.getElementById('zoneInsight').textContent =normalizeInsightText(`${lowestZone || 'Selected'} Zone Sentiment Dip`);
             document.getElementById('underperformingStores').textContent =normalizeInsightText(underperformingStores? `Stores ${underperformingStores} recorded the lowest ratings (≤4) and consistently receive negative sentiment.`
             : 'No stores with consistently low ratings (≤4) detected.');
-            document.getElementById('positiveMomentum').textContent =normalizeInsightText(`Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the West Zone.`);
+            document.getElementById('positiveMomentum').textContent =normalizeInsightText(`Positive reviews increased by ${positiveChange}% in the past 30 days, especially across the ${bestZone || 'zones'}.`);
             document.getElementById('cityInsight').textContent =`${topCities || 'Selected'} Cities in Spotlight`;
             document.getElementById('bestStoreInsight').textContent =normalizeInsightText(`Leading Store: ${bestStore || 'None'}`); 
             document.getElementById('themeInsight').textContent =normalizeInsightText(`This was the most mentioned theme, appearing in ${storeExperiencePercentage}% of all customer feedback. It is the key driver of both praise and criticism.`);
