@@ -342,15 +342,10 @@ function normalizeInsightText(text) {
         .negative-bg { background-color: rgba(239, 68, 68, 0.2); }
         .neutral-bg { background-color: rgba(245, 158, 11, 0.2); }
         .word-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
             padding: 10px;
+            position: relative;
         }
         .word-cloud span {
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.9rem;
             cursor: pointer;
         }
         .word-cloud span:hover {
@@ -568,20 +563,39 @@ function normalizeInsightText(text) {
 			});
 
 		const container = document.getElementById("wordCloud");
-		container.innerHTML = ""; 
+		container.innerHTML = "";
+		container.style.position = "relative";
+		container.style.height = "300px";
+		container.style.overflow = "hidden";
+
+		const emotionColors = {
+			"Delighted": "#10b981",
+			"Happy": "#34d399",
+			"Angry": "#ef4444",
+			"Frustrated": "#f87171",
+			"Impatient": "#fb923c",
+			"Price Concerned": "#f59e0b",
+			"Hygiene Focused": "#8b5cf6",
+			"Neutral": "#6b7280",
+			"Mixed": "#9ca3af"
+		};
 
 		const sortedEmotions = Object.entries(emotionCounts)
 			.sort((a, b) => b[1] - a[1])
-			.slice(0, 10);
+			.slice(0, 15);
 
-		sortedEmotions.forEach(([emotion, count]) => {
+		sortedEmotions.forEach(([emotion, count], index) => {
 			const span = document.createElement("span");
-			span.textContent = `${emotion} (${count})`;
-			span.style.fontSize = `${12 + count * 1.5}px`;
-			span.style.margin = "8px";
-			span.style.fontWeight = "600";
+			span.textContent = emotion;
+			span.style.position = "absolute";
+			span.style.fontSize = `${14 + count * 2}px`;
+			span.style.fontWeight = "bold";
+			span.style.color = emotionColors[emotion] || "#374151";
 			span.style.cursor = "pointer";
+			span.style.transform = `rotate(${Math.random() * 60 - 30}deg)`;
 			span.title = `Count: ${count}`;
+			span.style.left = `${Math.random() * 80 + 10}%`;
+			span.style.top = `${Math.random() * 80 + 10}%`;
 			container.appendChild(span);
 		});
 	}
