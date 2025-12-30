@@ -545,9 +545,14 @@ function normalizeInsightText(text) {
 		function standardizeEmotionText(text) {
 			if (!text) return "";
 			const lower = text.toLowerCase();
-			if (/amazing|excellent|loved|good|great|nice|perfect|awesome/.test(lower)) return "Positive";
-			if (/bad|poor|terrible|worst|horrible|awful|rude/.test(lower)) return "Negative";
-			if (/okay|average|fine|neutral|normal/.test(lower)) return "Neutral";
+			if (/amazing|excellent|awesome|perfect|loved|great|fantastic|wonderful/.test(lower)) return "Delighted";
+			if (/good|nice|happy|joy|pleased|satisfied|enjoyed/.test(lower)) return "Happy";
+			if (/bad|poor|terrible|worst|horrible|awful|disgusting/.test(lower)) return "Angry";
+			if (/rude|unfriendly|disrespectful|arrogant|unhelpful/.test(lower)) return "Frustrated";
+			if (/slow|wait|delay|queue|long|tedious/.test(lower)) return "Impatient";
+			if (/expensive|costly|overpriced|cheap|value/.test(lower)) return "Price Concerned";
+			if (/dirty|clean|hygiene|messy|neat/.test(lower)) return "Hygiene Focused";
+			if (/okay|average|fine|neutral|normal|alright/.test(lower)) return "Neutral";
 			return "Mixed";
 		}
 
