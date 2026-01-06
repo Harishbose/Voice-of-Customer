@@ -1,4 +1,3 @@
-
 <script type="text/javascript" src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script><script type="text/javascript">
         var gk_isXlsx = true;
         var gk_xlsxFileLookup = {"Fresh data_Excel.xlsx":true};
@@ -6,6 +5,35 @@
         function filledCell(cell) {
           return cell !== '' && cell != null;
         }
+        // ===============================
+// LOAD EXCEL FROM GITHUB (RAW)
+// ===============================
+const EXCEL_URL =
+  "https://raw.githubusercontent.com/Harishbose/Voice-of-Customer/main/latest.xlsx";
+
+fetch(EXCEL_URL)
+  .then(res => {
+    if (!res.ok) throw new Error("Failed to load Excel from GitHub");
+    return res.arrayBuffer();
+  })
+  .then(buffer => {
+    // Convert ArrayBuffer → Base64 (reuse existing logic safely)
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    const base64Data = btoa(binary);
+
+    // Inject into existing pipeline
+    gk_fileData = { "github.xlsx": base64Data };
+    gk_xlsxFileLookup = { "github.xlsx": true };
+
+    // Trigger existing logic
+    loadFileData("github.xlsx");
+  })
+  .catch(err => console.error("Excel load error:", err));
+
         function loadFileData(filename) {
         if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
             try {
